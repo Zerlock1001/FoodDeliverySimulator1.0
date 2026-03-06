@@ -54,42 +54,42 @@ public class Character : MonoBehaviour// 角色類別
             case 0:
                 foreach(Food.FoodType foodType in GamePlayManagement.instance.foodRequirement.requirementLevel0){
                     if(!foodInThisPlate.Contains(foodType)){
-                        Debug.Log("Character " + name + " is not fed because of " + foodType);
+                        GamePlayManagement.instance.salary -= 5;
                         //To-Do 处理食物不足的情况
                         return;
                     }
                 }
-                Debug.Log("Character " + name + " is fed");
+                GamePlayManagement.instance.salary += 10;
                 break;
             case 1:
                 foreach(Food.FoodType foodType in GamePlayManagement.instance.foodRequirement.requirementLevel1){
                     if(!foodInThisPlate.Contains(foodType)){
-                        Debug.Log("Character " + name + " is not fed because of " + foodType);
+                        GamePlayManagement.instance.salary -= 5;
                         //To-Do 处理食物不足的情况
                         return;
                     }
                 }
-                Debug.Log("Character " + name + " is fed");
+                GamePlayManagement.instance.salary += 10;
                 break;
             case 2:
                 foreach(Food.FoodType foodType in GamePlayManagement.instance.foodRequirement.requirementLevel2){
                     if(!foodInThisPlate.Contains(foodType)){
-                        Debug.Log("Character " + name + " is not fed because of " + foodType);
+                        GamePlayManagement.instance.salary -= 5;
                         //To-Do 处理食物不足的情况
                         return;
                     }
                 }
-                Debug.Log("Character " + name + " is fed");
+                GamePlayManagement.instance.salary += 10;
                 break;
             case 3:
                 foreach(Food.FoodType foodType in GamePlayManagement.instance.foodRequirement.requirementLevel3){
                     if(!foodInThisPlate.Contains(foodType)){
-                        Debug.Log("Character " + name + " is not fed because of " + foodType);
+                        GamePlayManagement.instance.salary -= 5;
                         //To-Do 处理食物不足的情况
                         return;
                     }
                 }
-                Debug.Log("Character " + name + " is fed");
+                GamePlayManagement.instance.salary += 10;
                 break;
             default:
                 break;

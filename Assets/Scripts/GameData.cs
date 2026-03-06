@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameData : MonoBehaviour
 {
+    public int day = 1;
     public int money = 0;
     public static GameData instance;
     public List<Food.FoodType> foodList = new List<Food.FoodType>();

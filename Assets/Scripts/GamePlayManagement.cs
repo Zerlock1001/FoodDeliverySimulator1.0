@@ -16,16 +16,20 @@ public class GamePlayManagement : MonoBehaviour
     public List<GameObject> CharacterSlots = new List<GameObject>();// 角色槽位
     public FoodRequirement foodRequirement;// 食物需求
     public List<GameObject> foodPrefab = new List<GameObject>();// 食物预制体
+    public int salary = 0;
+    public int extraMoney = 10;
+    public int dailyOutcome = -10;
+    public GameObject DayEndPanel;
     
     // Start is called before the first frame update
     void Awake()
     {
         instance = this;// 设置实例
         ShuffleCharacters();// 洗牌
-        SetCharactersPosition();// 设置角色位置
-        NextCharacter();// 下一个角色
+
     }
     void Start(){
+        BlackScreenController.instance.BlackScreenFadeOut("Day " + GameData.instance.day, 2f,DayStart);
         for(int i = 0; i < GameData.instance.foodList.Count; i++){
             if(GameData.instance.foodCount[i] > 0){ // 如果食物数量大于0
             for(int j = 0; j < GameData.instance.foodCount[i]; j++){
@@ -33,6 +37,10 @@ public class GamePlayManagement : MonoBehaviour
                 }
             }
         }
+    }
+    void DayStart(){
+        SetCharactersPosition();// 设置角色位置
+        NextCharacter();// 下一个角色
     }
 
 
@@ -78,9 +86,15 @@ public class GamePlayManagement : MonoBehaviour
             return true;
         }else{
             SetGameState(GameState.GamePlayEnd);// 设置游戏状态为游戏结束
-            Debug.Log("Game Play End");// 打印游戏结束
+            //Debug.Log("Game Play End");// 打印游戏结束
+            DayEnd();
             return false;
         }
+    }
+    void DayEnd(){
+        DayEndPanel.SetActive(true);
+        DayEndPanel.GetComponent<CheckManager>().UpdateMoney(this);
+
     }
     public void ShuffleCharacters(){// 洗牌
         // for(int i = 0; i < characters.Count; i++){

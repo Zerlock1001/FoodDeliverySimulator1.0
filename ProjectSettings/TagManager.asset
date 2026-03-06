@@ -44,8 +44,14 @@ TagManager:
   - name: Table
     uniqueID: 355557563
     locked: 0
+  - name: Character
+    uniqueID: 2265009733
+    locked: 0
   - name: FoodPlate
     uniqueID: 3229589795
+    locked: 0
+  - name: Food
+    uniqueID: 3859908217
     locked: 0
   - name: Items On Table
     uniqueID: 3154171471

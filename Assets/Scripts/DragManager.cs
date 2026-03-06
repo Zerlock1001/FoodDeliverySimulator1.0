@@ -22,10 +22,12 @@ public class DragManager : MonoBehaviour
         }
     }
     void Dragging(){
+        DraggingObject.GetComponent<SpriteRenderer>().sortingOrder = 10;
         Vector3 mousePositon = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         DraggingObject.transform.position = new Vector3(mousePositon.x, mousePositon.y, DraggingObject.transform.position.z) + DraggingOffset;
         if (Input.GetMouseButtonUp(0))
         {
+            DraggingObject.GetComponent<SpriteRenderer>().sortingOrder = 1;
             IDragHandler dragHandler = DraggingObject.GetComponent<IDragHandler>() as IDragHandler;
             Debug.Log("dragHandler: " + dragHandler);
             if(dragHandler != null)
