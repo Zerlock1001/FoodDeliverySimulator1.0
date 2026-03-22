@@ -48,8 +48,9 @@ public class Food : MonoBehaviour,IDragHandler
     public enum FoodType
     {
         Bread,
-        Burger,
+        Porridge,
         Cookie,
+        Null,
     }
 
 }

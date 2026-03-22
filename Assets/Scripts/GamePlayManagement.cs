@@ -17,9 +17,12 @@ public class GamePlayManagement : MonoBehaviour
     public FoodRequirement foodRequirement;// 食物需求
     public List<GameObject> foodPrefab = new List<GameObject>();// 食物预制体
     public int salary = 0;
+    public int punishment = 0;
     public int extraMoney = 10;
     public int dailyOutcome = -10;
+    public List<CheckManager.CheckResult> checkResults = new List<CheckManager.CheckResult>();
     public GameObject DayEndPanel;
+    public List<FoodSlot> foodSlots = new List<FoodSlot>();
     
     // Start is called before the first frame update
     void Awake()
@@ -30,22 +33,43 @@ public class GamePlayManagement : MonoBehaviour
     }
     void Start(){
         BlackScreenController.instance.BlackScreenFadeOut("Day " + GameData.instance.day, 2f,DayStart);
+        int k = 0;
         for(int i = 0; i < GameData.instance.foodList.Count; i++){
             if(GameData.instance.foodCount[i] > 0){ // 如果食物数量大于0
-            for(int j = 0; j < GameData.instance.foodCount[i]; j++){
-                    GameObject food = Instantiate(foodPrefab[i],foodPrefab[i].transform.position,Quaternion.identity);
+                for(int j = 0; j < GameData.instance.foodCount[i]; j++){
+                    GameObject food = Instantiate(foodPrefab[i],foodSlots[k].transform.position,Quaternion.identity);
                 }
+                foodSlots[k].foodInThisSlot = GameData.instance.foodList[i];
+                foodSlots[k].UpdateNumberOfFood();
+                k++;
             }
         }
     }
-    void DayStart(){
+
+    void DayStart()
+    {
         SetCharactersPosition();// 设置角色位置
-        NextCharacter();// 下一个角色
+        if (GameData.instance.day == 1) 
+        {
+            SetGameState(GameState.OpeningGuidance);
+            
+            string[] tutorial =
+            {
+                "Welcome to Food Delivery Simulator.",
+                "Please check the guidance book below.",
+                "Deliver food to each person according to their class.",
+                "Delivering the wrong food will be punished.",
+                "Good Luck."
+            };
+            DialogueManagement.instance.StartDialogue(tutorial);
+        }
+        else 
+        {
+            NextCharacter();
+        }
     }
 
-
-    // Update is called once per frame
-    void Update()// 更新
+    void Update()
     {
         if(Input.GetKeyDown(KeyCode.Space)){
             SetGameState(GameState.CharacterWaiting);// 设置游戏状态为角色等待
@@ -74,6 +98,7 @@ public class GamePlayManagement : MonoBehaviour
     }
     
     public enum GameState{
+        OpeningGuidance, // 新增：开场引导
         CharacterMoving,// 角色移动
         CharacterWaiting,// 角色等待
         GamePlayEnd,// 游戏结束
@@ -86,22 +111,33 @@ public class GamePlayManagement : MonoBehaviour
             return true;
         }else{
             SetGameState(GameState.GamePlayEnd);// 设置游戏状态为游戏结束
-            //Debug.Log("Game Play End");// 打印游戏结束
+            Debug.Log("Game Play End");// 打印游戏结束
             DayEnd();
             return false;
         }
     }
     void DayEnd(){
         DayEndPanel.SetActive(true);
-        DayEndPanel.GetComponent<CheckManager>().UpdateMoney(this);
-
+        Debug.Log("checkResults count: " + checkResults.Count);
+        List<CheckManager.CheckResult> checkResultsList = new();
+        if(salary != 0){
+            checkResultsList.Add(new("Salary", salary));
+        }
+        if(punishment != 0){
+            checkResultsList.Add(new("Punishment", punishment));
+        }
+        if(extraMoney != 0){
+            checkResultsList.Add(new("Income", extraMoney));
+        }
+        if(dailyOutcome != 0){
+            checkResultsList.Add(new("Daily Outcome", dailyOutcome));
+        }
+        foreach(CheckManager.CheckResult result in checkResults){
+            checkResultsList.Add(new(result.sentence, result.money));
+        }
+        DayEndPanel.GetComponent<CheckManager>().UpdateMoney(checkResultsList);
     }
-    public void ShuffleCharacters(){// 洗牌
-        // for(int i = 0; i < characters.Count; i++){
-        //     int randomIndex = Random.Range(0, characters.Count);
-        //     characters.Insert(i, characters[randomIndex]);
-        //     characters.RemoveAt(randomIndex);
-        // }
+    public void ShuffleCharacters(){
         for (int i = characters.Count - 1; i > 0; i--)
         {
             int j = Random.Range(0, i + 1);

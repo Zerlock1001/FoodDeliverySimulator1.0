@@ -5,27 +5,71 @@ using TMPro;
 
 public class DialogueManagement : MonoBehaviour
 {
+    public static DialogueManagement instance;
+
+    [Header("常规对话UI")]
     public GameObject dialoguePanel;// 对话面板
     public TextMeshProUGUI dialogueText;// 对话文本
-    public static DialogueManagement instance;
-    // Start is called before the first frame update
-    void Awake()// 初始化
+
+    [Header("新手引导UI")]
+    public GameObject guidePanel; 
+    public TextMeshProUGUI guideText;
+
+    private TextMeshProUGUI activeText; 
+    private GameObject activePanel;
+    private Queue<string> sentences = new Queue<string>();
+
+    void Awake() { instance = this; }
+
+    void Update()
     {
-        instance = this;// 设置实例
+        // 如果有面板在显示，且按下回车或空格，显示下一句
+        if ((dialoguePanel.activeSelf || guidePanel.activeSelf) && 
+            (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)))
+        {
+            DisplayNextSentence();
+        }
     }
 
-    public void StartDialogue(string dialogueText)// 开始对话，重载方法参数为字符串
+    public void StartDialogue(string[] lines, bool isGuidance = false)
     {
-        dialoguePanel.SetActive(true);// 显示对话面板
-        this.dialogueText.text = dialogueText;// 设置对话文本
+        sentences.Clear();
+        foreach (string line in lines) sentences.Enqueue(line);
+
+        // 根据类型，分别激活/隐藏对应的面板
+        if (isGuidance) {
+            guidePanel.SetActive(true);    
+            dialoguePanel.SetActive(false); 
+        } else {
+            guidePanel.SetActive(false);   
+            dialoguePanel.SetActive(true);  
+        }
+
+        activePanel = isGuidance ? guidePanel : dialoguePanel;
+        activeText = isGuidance ? guideText : dialogueText;
+
+        DisplayNextSentence();
     }
-    public void StartDialogue(Character character)// 开始对话，重载方法参数为角色
+    
+    public void DisplayNextSentence()
     {
-        dialoguePanel.SetActive(true);// 显示对话面板
-        this.dialogueText.text = character.dialogueText;// 设置对话文本
+        if (sentences.Count == 0)
+        {
+            EndDialogue();
+            return;
+        }
+        activeText.text = sentences.Dequeue();
     }
-    public void EndDialogue()// 结束对话
+
+    public void EndDialogue()
     {
         dialoguePanel.SetActive(false);
+        guidePanel.SetActive(false);
+
+        if (GamePlayManagement.instance.currentGameState == GamePlayManagement.GameState.OpeningGuidance)
+        {
+            GamePlayManagement.instance.NextCharacter();
+        }
     }
 }
+

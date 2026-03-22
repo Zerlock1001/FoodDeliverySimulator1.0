@@ -9,6 +9,7 @@ public class GameData : MonoBehaviour
     public static GameData instance;
     public List<Food.FoodType> foodList = new List<Food.FoodType>();
     public List<int> foodCount = new List<int>();
+    public List<ShopItems> shopItems = new List<ShopItems>();
 
     // Start is called before the first frame update
     void Awake(){
